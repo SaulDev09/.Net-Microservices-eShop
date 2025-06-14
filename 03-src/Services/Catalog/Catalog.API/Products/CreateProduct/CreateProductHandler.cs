@@ -20,17 +20,20 @@ namespace Catalog.API.Products.CreateProduct
 
 
     internal class CreateProductCommandHandler
-        (IDocumentSession session, IValidator<CreateProductCommand> validator)
+        //(IDocumentSession session, IValidator<CreateProductCommand> validator) // FluenValidation manual
+        (IDocumentSession session)
         : ICommandHandler<CreateProductCommand, CreateProductResult>
     {
         public async Task<CreateProductResult> Handle(CreateProductCommand command, CancellationToken cancellation)
         {
-            var result = await validator.ValidateAsync(command, cancellation);
-            var errors = result.Errors.Select(x => x.ErrorMessage).ToList();
-            if (errors.Any())
-            {
-                throw new ValidationException(errors.FirstOrDefault());
-            }
+            #region [FluenValidation manual]
+            //var result = await validator.ValidateAsync(command, cancellation);
+            //var errors = result.Errors.Select(x => x.ErrorMessage).ToList();
+            //if (errors.Any())
+            //{
+            //    throw new ValidationException(errors.FirstOrDefault());
+            //}
+            #endregion
 
 
             var product = new Product
