@@ -10,12 +10,22 @@ builder.Services.AddMediatR(config =>
     config.AddOpenBehavior(typeof(LogginBehavior<,>));
 });
 
+builder.Services.AddMarten(opts =>
+{
+    opts.Connection(builder.Configuration.GetConnectionString("Database")!);
+    opts.Schema.For<ShoppingCart>().Identity(x => x.UserName);
+}).UseLightweightSessions();
+
+builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 #endregion
 
 var app = builder.Build();
 
 #region [HTTP request Pipeline]
 app.MapCarter();
+app.UseExceptionHandler(options => { });
 
 #endregion
 
