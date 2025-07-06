@@ -1,3 +1,6 @@
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+
 var builder = WebApplication.CreateBuilder(args);
 
 #region [Services]
@@ -39,7 +42,10 @@ var app = builder.Build();
 #region [HTTP request Pipeline]
 app.MapCarter();
 app.UseExceptionHandler(options => { });
-app.UseHealthChecks("/health");
+app.UseHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 #endregion
 
