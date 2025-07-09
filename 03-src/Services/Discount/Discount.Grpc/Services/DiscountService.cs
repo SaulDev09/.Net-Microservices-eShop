@@ -22,5 +22,22 @@ namespace Discount.Grpc.Services
             var couponModel = coupon.Adapt<CouponModel>();
             return couponModel;
         }
+
+        public override async Task<CouponModel> CreateDiscount(CreateDiscountRequest request, ServerCallContext context)
+        {
+            var coupon = request.Coupon.Adapt<Coupon>();
+            if (coupon is null)
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid request object."));
+
+            dbContext.Coupons.Add(coupon);
+            await dbContext.SaveChangesAsync();
+
+            logger.LogInformation("Discount is successfully created. ProductName: {ProductName}", coupon.ProductName);
+
+            var couponModel = coupon.Adapt<CouponModel>();
+            return couponModel;
+
+        }
+
     }
 }
