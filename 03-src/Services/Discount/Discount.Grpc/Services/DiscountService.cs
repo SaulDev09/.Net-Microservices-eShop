@@ -39,5 +39,19 @@ namespace Discount.Grpc.Services
 
         }
 
+        public override async Task<CouponModel> UpdateDiscount(UpdateDiscountRequest request, ServerCallContext context)
+        {
+            var coupon = request.Coupon.Adapt<Coupon>();
+            if (coupon is null)
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid request object."));
+
+            dbContext.Coupons.Update(coupon);
+            await dbContext.SaveChangesAsync();
+
+            logger.LogInformation("Discount is successfully updated. ProductName: {ProductName}", coupon.ProductName);
+
+            var couponModel = coupon.Adapt<CouponModel>();
+            return couponModel;
+        }
     }
 }
